@@ -141,16 +141,29 @@ class NumericFilter extends FilterPluginBase {
   protected function valueForm(&$form, FormStateInterface $form_state) {
     $form['value']['#tree'] = TRUE;
 
+    // Set a filter wrapper.
+    $exposed = !empty($this->options['expose']);
+    $wrapped = ($exposed && in_array($this->operator, $this->operatorValues(2))) || !empty($this->options['expose']['use_operator']);
+    if ($wrapped) {
+      $form['value']['#type'] = 'fieldset';
+      if (!empty($this->exposedInfo()['label'])) {
+        $form['value']['#title'] = $this->exposedInfo()['label'];
+      }
+      if (!empty($this->exposedInfo()['description'])) {
+        $form['value']['#description'] = $this->exposedInfo()['description'];
+      }
+      if ($exposed) {
+        $form['value']['operator'] = $form[$this->options['expose']['operator_id']];
+        unset($form[$this->options['expose']['operator_id']]);
+      }
+    }
+
     // We have to make some choices when creating this as an exposed
     // filter form. For example, if the operator is locked and thus
     // not rendered, we can't render dependencies; instead we only
     // render the form items we need.
     $which = 'all';
-    if (!empty($form['operator'])) {
-      $source = ':input[name="options[operator]"]';
-    }
-
-    if ($exposed = $form_state->get('exposed')) {
+    if ($exposed) {
       $identifier = $this->options['expose']['identifier'];
 
       if (empty($this->options['expose']['use_operator']) || empty($this->options['expose']['operator_id'])) {
@@ -158,13 +171,17 @@ class NumericFilter extends FilterPluginBase {
         $which = in_array($this->operator, $this->operatorValues(2)) ? 'minmax' : 'value';
       }
       else {
-        $source = ':input[name="' . $this->options['expose']['operator_id'] . '"]';
+        $source = ':input[name="' . $this->options['expose']['identifier'] . '[operator]"]';
       }
+    }
+    // Need to adjust the states source for the filter admin form.
+    if (!empty($form['operator'])) {
+      $source = ':input[name="options[operator]"]';
     }
 
     $user_input = $form_state->getUserInput();
     if ($which == 'all') {
-      $form['value']['value'] = array(
+      $value['value'] = array(
         '#type' => 'textfield',
         '#title' => !$exposed ? $this->t('Value') : '',
         '#size' => 30,
@@ -172,7 +189,7 @@ class NumericFilter extends FilterPluginBase {
       );
       // Setup #states for all operators with one value.
       foreach ($this->operatorValues(1) as $operator) {
-        $form['value']['value']['#states']['visible'][] = array(
+        $value['value']['#states']['visible'][] = array(
           $source => array('value' => $operator),
         );
       }
@@ -184,7 +201,7 @@ class NumericFilter extends FilterPluginBase {
     elseif ($which == 'value') {
       // When exposed we drop the value-value and just do value if
       // the operator is locked.
-      $form['value'] = array(
+      $value = array(
         '#type' => 'textfield',
         '#title' => !$exposed ? $this->t('Value') : '',
         '#size' => 30,
@@ -197,15 +214,15 @@ class NumericFilter extends FilterPluginBase {
     }
 
     if ($which == 'all' || $which == 'minmax') {
-      $form['value']['min'] = array(
+      $value['min'] = array(
         '#type' => 'textfield',
-        '#title' => !$exposed ? $this->t('Min') : '',
+        '#title' => $exposed ? $this->t('Min') : '',
         '#size' => 30,
         '#default_value' => $this->value['min'],
       );
-      $form['value']['max'] = array(
+      $value['max'] = array(
         '#type' => 'textfield',
-        '#title' => !$exposed ? $this->t('And max') : $this->t('And'),
+        '#title' => $exposed ? $this->t('And max') : $this->t('And'),
         '#size' => 30,
         '#default_value' => $this->value['max'],
       );
@@ -217,9 +234,10 @@ class NumericFilter extends FilterPluginBase {
             $source => array('value' => $operator),
           );
         }
-        $form['value']['min'] += $states;
-        $form['value']['max'] += $states;
+        $value['min'] += $states;
+        $value['max'] += $states;
       }
+
       if ($exposed && !isset($user_input[$identifier]['min'])) {
         $user_input[$identifier]['min'] = $this->value['min'];
       }
@@ -227,14 +245,15 @@ class NumericFilter extends FilterPluginBase {
         $user_input[$identifier]['max'] = $this->value['max'];
       }
 
-      if (!isset($form['value'])) {
+      if (!isset($value)) {
         // Ensure there is something in the 'value'.
-        $form['value'] = array(
+        $value = array(
           '#type' => 'value',
           '#value' => NULL
         );
       }
     }
+    $form['value'] += $value;
   }
 
   public function query() {

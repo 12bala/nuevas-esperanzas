@@ -19,9 +19,6 @@ sites/*/services*.yml
 sites/*/files/*
 sites/*/private
 
-# Do not ignore configuration.
-!sites/*/files/config_*
-
 # Ignore SimpleTest multi-site environment.
 sites/simpletest
 
@@ -37,3 +34,10 @@ sites/simpletest
 
 # Ignore SimpleTest multi-site environment.
 # simpletest
+
+# Test artifacts
+tests/vendor
+tests/bin
+
+# Ignore PhpStorm files
+.idea

@@ -1,0 +1,19 @@
+uuid: 3b1b3bc4-526a-4cd9-a000-ee952f48ace9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.nica_entity.field_event_comments
+    - nica_entity.content_type.event_history
+id: nica_entity.event_history.field_event_comments
+field_name: field_event_comments
+entity_type: nica_entity
+bundle: event_history
+label: 'Comentarios del Resultado del Evento'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

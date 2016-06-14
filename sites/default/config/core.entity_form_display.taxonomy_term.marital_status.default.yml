@@ -1,0 +1,29 @@
+uuid: 0e582deb-5765-4396-a05e-945a068560ed
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.marital_status
+  module:
+    - text
+id: taxonomy_term.marital_status.default
+targetEntityType: taxonomy_term
+bundle: marital_status
+mode: default
+content:
+  description:
+    type: text_textarea
+    weight: 1
+    settings:
+      placeholder: ''
+      rows: 5
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  langcode: true
