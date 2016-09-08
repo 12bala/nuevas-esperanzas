@@ -1,0 +1,14 @@
+services:
+  nica_migrate.project_history:
+    class: Drupal\nica_migrate\EventSubscriber\ProjectHistoryEvent
+    tags:
+      - { name: event_subscriber }
+
+  nica_migrate.nica_validate_date:
+        class: Drupal\nica_migrate\EventSubscriber\NicaValidateDateEvent
+        tags:
+          - { name: event_subscriber }
+  nica_migrate.event_history:
+        class: Drupal\nica_migrate\EventSubscriber\EventHistoryDateEvent
+        tags:
+          - { name: event_subscriber }
