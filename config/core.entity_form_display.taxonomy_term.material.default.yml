@@ -1,0 +1,29 @@
+uuid: 0411b57e-f631-42ac-8f55-85a39d0a1e36
+langcode: en
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.material
+  module:
+    - text
+id: taxonomy_term.material.default
+targetEntityType: taxonomy_term
+bundle: material
+mode: default
+content:
+  description:
+    type: text_textarea
+    weight: 1
+    settings:
+      placeholder: ''
+      rows: 5
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  langcode: true

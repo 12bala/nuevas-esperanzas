@@ -1,0 +1,87 @@
+<?php
+
+/**
+ * @file
+ *   Contains the nica_entity.module file for the Nica Entity module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Drupal\nica_entity\Entity\NicaEntityContentType;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Template\Attribute;
+
+/**
+ * Implements hook_help().
+ */
+function nica_entity_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the nica_entity module.
+    case 'help.page.nica_entity':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides a bundle-able Nica entity used to store Nica content.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function nica_entity_theme() {
+  return [
+    'nica_entity' => [
+      'render element' => 'elements',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function nica_entity_theme_suggestions_nica_entity(array $variables) {
+  $suggestions = array();
+  $nica_entiy = $variables['elements']['#nica_entity'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'nica_entity__' . $sanitized_view_mode;
+  $suggestions[] = 'nica_entity__' . $nica_entiy->bundle();
+  $suggestions[] = 'nica_entity__' . $nica_entiy->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'nica_entity__' . $nica_entiy->id();
+  $suggestions[] = 'nica_entity__' . $nica_entiy->id() . '__' . $sanitized_view_mode;
+
+  return $suggestions;
+}
+
+/**
+ * Adds a f
+ * @param $variables
+ */
+function template_preprocess_nica_entity(&$variables) {
+  $variables['nica_entity'] = $variables['elements']['#nica_entity'];
+  // Helpful $content variable for templates.
+  $variables += array('content' => array());
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function nica_entity_entity_extra_field_info() {
+  $extra = array();
+  $description = t('Nica entity module element');
+  foreach (NicaEntityContentType::loadMultiple() as $bundle) {
+    $extra['nica_entity'][$bundle->id()]['display']['links'] = array(
+      'label' => t('Links'),
+      'description' => $description,
+      'weight' => 100,
+      'visible' => TRUE,
+    );
+  }
+
+  return $extra;
+}

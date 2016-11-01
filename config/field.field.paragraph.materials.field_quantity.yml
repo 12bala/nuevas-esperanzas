@@ -1,0 +1,25 @@
+uuid: bde283aa-a816-45b3-a900-adb920079092
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_quantity
+    - paragraphs.paragraphs_type.materials
+id: paragraph.materials.field_quantity
+field_name: field_quantity
+entity_type: paragraph
+bundle: materials
+label: Cantidad
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: !!float 1
+default_value_callback: ''
+settings:
+  min: !!float 1
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: float
